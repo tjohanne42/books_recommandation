@@ -49,3 +49,5 @@ if __name__ == "__main__":
     if not os.path.isfile("ratings.csv"):
         download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "ratings.csv")
         
+    # TODO: add tags.csv
+        
