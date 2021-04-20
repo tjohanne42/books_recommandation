@@ -3,10 +3,6 @@ import requests
 from tqdm import tqdm
 
 
-
-
-
-
 def get_confirm_token(response):                                      
     for key, value in response.cookies.items():                       
         if key.startswith('download_warning'):                        
@@ -39,14 +35,12 @@ def download_file_from_google_drive(id, destination):
     save_response_content(response, destination)
 
 
-
-
 if __name__ == "__main__":
 
-    if not os.path.isfile("books.csv"):
+    if not os.path.isfile("csv/books.csv"):
         download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "books.csv")
 
-    if not os.path.isfile("ratings.csv"):
+    if not os.path.isfile("csv/ratings.csv"):
         download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "ratings.csv")
         
     # TODO: add tags.csv
