@@ -37,11 +37,18 @@ def download_file_from_google_drive(id, destination):
 
 if __name__ == "__main__":
 
-    if not os.path.isfile("csv/books.csv"):
-        download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "books.csv")
+    if not os.path.isdir("databases"):
+        os.system("mkdir csv")
+    
+    if not os.path.isfile("databases/books.csv"):
+        download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "databases/books.csv")
 
-    if not os.path.isfile("csv/ratings.csv"):
-        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "ratings.csv")
+    if not os.path.isfile("databases/ratings.csv"):
+        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/ratings.csv")
         
-    # TODO: add tags.csv and book_tags.csv
+    # TODO : CHANGE PATH GOOGLE DRIVE
+    if not os.path.isfile("databases/book_tags.csv"):
+        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/book_tags.csv")
         
+    if not os.path.isfile("databases/tags.csv"):
+        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/tags.csv")
