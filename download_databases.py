@@ -52,3 +52,55 @@ if __name__ == "__main__":
         
     if not os.path.isfile("databases/tags.csv"):
         download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/tags.csv")
+        
+    if not os.path.isfile("svd_pickle_file"):
+        download_file_from_google_drive("14J9bLk6pRV8RskK-IzduXuhje837Oa8l", "svd_pickle_file")
+        
+    df_r = pd.read_csv("databases/ratings.csv")
+    df_b = pd.read_csv("databases/books.csv")
+    df_bt = pd.read_csv("databases/book_tags.csv")
+    df_t = pd.read_csv("databases/tags.csv")
+    
+    ret = input("Enter mysql port (default=3307):\n")
+    hostname="localhost:" + ret
+    dbname="book_recommendation"
+    uname = input("Enter mysql username:\n")
+    #uname="root"
+    pwd = input("Enter mysql password:\n")
+    #pwd="azerty"
+
+    # Create SQLAlchemy engine to connect to MySQL Database
+    engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
+    if not database_exists(engine.url):
+        print("database doesnt exist")
+        create_database(engine.url)
+    else:
+        print("database already exist")
+
+    # Convert dataframe to sql table
+
+    with engine.begin() as connection:
+
+        try:
+            df_r.to_sql('ratings', connection, index=False)
+            print("ratings uploaded")
+        except:
+            print("ratings already exists")
+
+        try:
+            df_b.to_sql('books', connection, index=False)
+            print("books uploaded")
+        except:
+            print("books already exists")
+
+        try:
+            df_bt.to_sql('book_tags', connection, index=False)
+            print("book_tags uploaded")
+        except:
+            print("book_tags already exists")
+
+        try:
+            df_t.to_sql('tags', connection, index=False)
+            print("tags uploaded")
+        except:
+            print("tags already exists")
