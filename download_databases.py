@@ -1,6 +1,9 @@
 import os
 import requests
+import pandas as pd
 from tqdm import tqdm
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
 
 
 def get_confirm_token(response):                                      
@@ -44,17 +47,17 @@ if __name__ == "__main__":
         download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "databases/books.csv")
 
     if not os.path.isfile("databases/ratings.csv"):
-        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/ratings.csv")
+        download_file_from_google_drive("1p8sB9hW5fDn6JUjKTYTGgrHwy2gWNu5s", "databases/ratings.csv")
         
     # TODO : CHANGE PATH GOOGLE DRIVE
     if not os.path.isfile("databases/book_tags.csv"):
-        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/book_tags.csv")
+        download_file_from_google_drive("1jUX5wnikcgp55vpvBqcadUcJYrEghJyt", "databases/book_tags.csv")
         
     if not os.path.isfile("databases/tags.csv"):
-        download_file_from_google_drive("1v_Xl9n3J4eHGPs5ZIyNyrZIvgVDDqlf1", "databases/tags.csv")
+        download_file_from_google_drive("1lyZ_hOt4S2cMJ0tdo5Khc6rT_U4c60M0", "databases/tags.csv")
         
     if not os.path.isfile("svd_pickle_file"):
-        download_file_from_google_drive("14J9bLk6pRV8RskK-IzduXuhje837Oa8l", "svd_pickle_file")
+        download_file_from_google_drive("10j-l6WcTjdnzHkpZtwlJOiVoYk7oi-kZ", "svd_pickle_file")
         
     df_r = pd.read_csv("databases/ratings.csv")
     df_b = pd.read_csv("databases/books.csv")
@@ -71,9 +74,11 @@ if __name__ == "__main__":
 
     # Create SQLAlchemy engine to connect to MySQL Database
     engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
+    print("checking if database exists ...")
     if not database_exists(engine.url):
         print("database doesnt exist")
         create_database(engine.url)
+        print("database created")
     else:
         print("database already exist")
 
@@ -82,24 +87,28 @@ if __name__ == "__main__":
     with engine.begin() as connection:
 
         try:
+            print("uploading ratings ...")
             df_r.to_sql('ratings', connection, index=False)
             print("ratings uploaded")
         except:
             print("ratings already exists")
 
         try:
+            print("uploading books ...")
             df_b.to_sql('books', connection, index=False)
             print("books uploaded")
         except:
             print("books already exists")
 
         try:
+            print("uploading book_tags ...")
             df_bt.to_sql('book_tags', connection, index=False)
             print("book_tags uploaded")
         except:
             print("book_tags already exists")
 
         try:
+            print("uploading tags ...")
             df_t.to_sql('tags', connection, index=False)
             print("tags uploaded")
         except:
