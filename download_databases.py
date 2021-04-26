@@ -38,7 +38,7 @@ def download_file_from_google_drive(id, destination):
 if __name__ == "__main__":
 
     if not os.path.isdir("databases"):
-        os.system("mkdir csv")
+        os.system("mkdir databases")
     
     if not os.path.isfile("databases/books.csv"):
         download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "databases/books.csv")
