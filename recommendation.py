@@ -14,22 +14,20 @@ from surprise import Reader
 from surprise import SVD
 from surprise.model_selection import cross_validate
 
+from download_databases import *
+
 
 class BookRecommendation(object):
 
-    def __init__(self, hostname, dbname, uname, pwd, verbose=0):
+    def __init__(self, verbose=0):
         """
         params:
             verbose -> int
                 if verbose > 0:
                     print progress
         """
-        hostname=hostname
-        dbname=dbname
-        uname=uname
-        pwd=pwd
-        self.engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
-        
+        self.engine = read_mysql_info_file()
+
         init_timer = time.time()
         self.svd_file = "svd_pickle_file"
         
@@ -47,7 +45,10 @@ class BookRecommendation(object):
         
     def update_database(self):
         if len(self.new_user_id) > 0:
-            df_r.to_csv("ratings.csv", index=False)
+            print("Update database")
+            self.df_r.to_csv("databases/ratings.csv", index=False)
+            with self.engine.begin() as connection:
+                self.df_r.to_sql('ratings', connection, index=False, if_exists="replace")
             self.new_user_id = []
     
     
@@ -240,15 +241,20 @@ class BookRecommendation(object):
         
             
     def generate_recommendation(self, user_id, n_books=10, best=False, new_horizon=True):
+
         if user_id in self.new_user_id or user_id not in self.df_r["user_id"].values.tolist() or new_horizon == False:
             return self._recommend_books_from_user_id(user_id, n_books)
         
         book_ids = list(self.df_b['book_id'].values)
+        unwanted_id = self.df_r[self.df_r["user_id"] == user_id]["book_id"].values.tolist()
+
         random.shuffle(book_ids)
 
         book_list = {"book_id": [], "rating": []}
 
         for book_id in book_ids:
+            if book_id in unwanted_id:
+                continue
             rating = self.svd.predict(uid=user_id, iid=book_id).est
             if rating >= self.rating_mean:
                 book_list["book_id"].append(book_id)
@@ -303,7 +309,6 @@ class BookRecommendation(object):
         self.df_r = self.df_r.drop(self.df_r[self.df_r["user_id"] == user_id].index)
         self.df_r.reset_index(drop=True)
 
-book_recommendation = BookRecommendation("localhost:3307", "book_recommendation", "root", "azerty", verbose=1)
 
 def show_books(start=0, end=10):
     print("\n", str(" "+str(start)+" ").center(50, "-"))
@@ -332,11 +337,17 @@ def add_ratings(user_id=1000000, book_id=[1], rating=[5]):
 def del_user(user_id=1000000):
     book_recommendation.del_user(user_id)
 
-#show_books(0, 10)
-#show_related_books(1, n_books=10)
-add_ratings(user_id=1000000, book_id=[1, 2, 3, 4, 5], rating=[3, 5, 5, 4, 5])
-#show_user(user_id=1)
-#del_user(user_id=1000000)
-recommend_user(1000000, n_books=10, new_horizon=False)
-recommend_user(1000000, n_books=10, new_horizon=True)
+
+if __name__ == "__main__":
+
+    book_recommendation = BookRecommendation(verbose=1)
+
+    #show_books(0, 10)
+    #show_related_books(1, n_books=10)
+    add_ratings(user_id=1000000, book_id=[1, 2, 3, 4, 5], rating=[3, 5, 5, 4, 5])
+    show_user(user_id=1000000)
+    recommend_user(1000000, n_books=10, new_horizon=False)
+    recommend_user(1000000, n_books=10, new_horizon=True)
+    del_user(user_id=1000000)
+
 

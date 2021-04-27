@@ -64,11 +64,12 @@ def read_mysql_info_file():
     file.close()
     if len(lines) < 4:
         return create_mysql_info_file()
-    hostname = lines[0]
-    uname = lines[1]
-    pwd = lines[2]
-    db_name = lines[3]
+    hostname = lines[0].strip("\n")
+    uname = lines[1].strip("\n")
+    pwd = lines[2].strip("\n")
+    db_name = lines[3].strip("\n")
     connection_str = f"mysql+pymysql://{uname}:{pwd}@{hostname}/{db_name}"
+    engine = create_engine(connection_str)
     try:
         engine = create_engine(connection_str)
     except:
