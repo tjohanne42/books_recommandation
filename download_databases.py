@@ -38,42 +38,80 @@ def download_file_from_google_drive(id, destination):
     save_response_content(response, destination)
 
 
+def create_mysql_info_file():
+    f = open("mysql_info.txt", "w")
+    while True:
+        hostname = input("Enter mysql hostname (ex: localhost:3306):\n")
+        uname = input("Enter mysql username (ex: root):\n")
+        pwd = input("Enter mysql password (ex: root):\n")
+        db_name = input("Enter mysql database (ex: book_recommendation):\n")
+        connection_str = f"mysql+pymysql://{uname}:{pwd}@{hostname}/{db_name}"
+        try:
+            engine = create_engine(connection_str)
+            break
+        except:
+            print("Connection failed, try again")
+    f.write("\n".join([hostname, uname, pwd, db_name]))
+    f.close()
+    return engine
+
+
+def read_mysql_info_file():
+    if not os.path.isfile("mysql_info.txt"):
+        return create_mysql_info_file()
+    file = open('mysql_info.txt', 'r')
+    lines = file.readlines()
+    file.close()
+    if len(lines) < 4:
+        return create_mysql_info_file()
+    hostname = lines[0]
+    uname = lines[1]
+    pwd = lines[2]
+    db_name = lines[3]
+    connection_str = f"mysql+pymysql://{uname}:{pwd}@{hostname}/{db_name}"
+    try:
+        engine = create_engine(connection_str)
+    except:
+        print("Login info in mysql_info.txt incorrect")
+        return create_mysql_info_file()
+    return engine
+
+
 if __name__ == "__main__":
 
     if not os.path.isdir("databases"):
+        print("Creating directory databases")
         os.system("mkdir databases")
     
     if not os.path.isfile("databases/books.csv"):
+        print("Downloading books.csv")
         download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "databases/books.csv")
 
     if not os.path.isfile("databases/ratings.csv"):
+        print("Downloading ratings.csv")
         download_file_from_google_drive("1p8sB9hW5fDn6JUjKTYTGgrHwy2gWNu5s", "databases/ratings.csv")
         
-    # TODO : CHANGE PATH GOOGLE DRIVE
     if not os.path.isfile("databases/book_tags.csv"):
+        print("Downloading book_tags.csv")
         download_file_from_google_drive("1jUX5wnikcgp55vpvBqcadUcJYrEghJyt", "databases/book_tags.csv")
         
     if not os.path.isfile("databases/tags.csv"):
+        print("Downloading tags.csv")
         download_file_from_google_drive("1lyZ_hOt4S2cMJ0tdo5Khc6rT_U4c60M0", "databases/tags.csv")
         
     if not os.path.isfile("svd_pickle_file"):
+        print("Downloading svd_pickle_file")
         download_file_from_google_drive("10j-l6WcTjdnzHkpZtwlJOiVoYk7oi-kZ", "svd_pickle_file")
         
     df_r = pd.read_csv("databases/ratings.csv")
     df_b = pd.read_csv("databases/books.csv")
     df_bt = pd.read_csv("databases/book_tags.csv")
     df_t = pd.read_csv("databases/tags.csv")
-    
-    ret = input("Enter mysql port (default=3307):\n")
-    hostname="localhost:" + ret
-    dbname="book_recommendation"
-    uname = input("Enter mysql username:\n")
-    #uname="root"
-    pwd = input("Enter mysql password:\n")
-    #pwd="azerty"
+
+    # connect to mysql
+    engine = read_mysql_info_file()
 
     # Create SQLAlchemy engine to connect to MySQL Database
-    engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
     print("checking if database exists ...")
     if not database_exists(engine.url):
         print("database doesnt exist")
