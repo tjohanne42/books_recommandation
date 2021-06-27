@@ -14,7 +14,7 @@ from surprise import Reader
 from surprise import SVD
 from surprise.model_selection import cross_validate
 
-from download_databases import *
+from setup_database import *
 
 
 class BookRecommendation(object):
