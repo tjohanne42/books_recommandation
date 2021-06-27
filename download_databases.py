@@ -81,7 +81,7 @@ def read_mysql_info_file():
 if __name__ == "__main__":
 
     if not os.path.isdir("databases"):
-        print("Creating directory databases")
+        print("Creating databases directory")
         os.system("mkdir databases")
     
     if not os.path.isfile("databases/books.csv"):

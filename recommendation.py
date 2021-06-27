@@ -129,7 +129,7 @@ class BookRecommendation(object):
         new_idx = []
         i = 0
         while len(new_idx) < n_books and i < len(idx):
-            if idx[i] not in unanted_id:
+            if idx[i] not in unwanted_id:
                 new_idx.append(idx[i])
             i += 1
             
