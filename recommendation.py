@@ -30,12 +30,16 @@ class BookRecommendation(object):
 
         init_timer = time.time()
         self.svd_file = "svd.pkl"
+        self.corr_file = "corr.pkl"
         
         self.new_user_id = []
         
         self.df_r, self.df_b = self._load_df()
         #self.svd = self.train_svd(verbose=verbose)
         self.svd = self.load_svd(verbose=verbose)
+        #self.corr = self._init_corr(verbose=verbose)
+        self.corr = self.load_corr(verbose=verbose)
+        
         if verbose > 0:
             print("Time to init:", time.time() - init_timer, "sec")
         # use atexit if you want to update the database at the end of script
@@ -97,13 +101,46 @@ class BookRecommendation(object):
             print("Done")
         return svd
 
+
+    def _init_corr(self, verbose=0, n_components=20):
+        if verbose > 0:
+            print("Loading matrix ...")
+        df_r_pivot = self.df_r.pivot(index="user_id", columns ="book_id", values="rating")
+        df_r_pivot = df_r_pivot.fillna(0)
+        X = df_r_pivot.values.T
+        if verbose > 0:
+            print("Done")
+            print("Fiting SVD ...")
+        # SVD = TruncatedSVD(n_components=n_components, random_state=42)
+        # matrix = SVD.fit_transform(X)
+        if verbose > 0:
+            print("Done")
+            print("Loading corr ...")
+        #corr = np.corrcoef(matrix)
+        corr = np.corrcoef(X)
+        with open('corr.pkl', 'wb') as f1:
+            pickle.dump(corr, f1)
+        if verbose > 0:
+            print("Done")
+        return corr
+
+
+    def load_corr(self, verbose=0):
+        if verbose:
+            print("Loading corr ...")
+        with open(self.corr_file, 'rb') as f1:
+            corr = pickle.load(f1)
+        if verbose:
+            print("Done")
+        return corr
+
         
     def show_book_title_from_id(self, book_id):
         book_title = self.df_b.loc[self.df_b["book_id"] == book_id, "title"].values[0]
         print(book_id, book_title)
 
 
-    def show_books(self, start, end):
+    def _show_books(self, start, end):
         while start < end and start < len(self.title_series):
             print("book_id", start+1, "title", self.title_series[start])
             start += 1
@@ -113,11 +150,11 @@ class BookRecommendation(object):
         idx = []
         if type(book) == str:
             book_id = self.df_b.loc[self.df_b["title"] == book, "book_id"].values[0]
-        elif type(book) == int:
+        elif type(book) == int or type(book) == np.int64:
             book_id = book
         else:
             return idx
-        
+
         book_corr = self.corr[book - 1]
         idx = (-book_corr).argsort()
         
@@ -196,7 +233,6 @@ class BookRecommendation(object):
                 
             nominator = np.power(2, df_user["rating"][df_user.index[i]] - min_rated_in_accepted_ratings)
             wanted_n_books = int(np.ceil(nominator * (book_list_size / denominator)))
-            
             book_list += self.related_books(book=df_user["book_id"][df_user.index[i]],
                                             n_books=wanted_n_books, unwanted_id=book_list+user_read_books)
             i += 1
@@ -273,7 +309,7 @@ class BookRecommendation(object):
             print(self.df_b[self.df_b["book_id"] == df_user["book_id"][i]]["title"].values[0], df_user["rating"][i])
 
     
-    def add_ratings(self, user_id, book_id, rating):
+    def add_ratings(self, user_id=1000000, book_id=[1], rating=[5]):
         """
          if user doesn't exist -> create user
         """
@@ -305,14 +341,14 @@ class BookRecommendation(object):
         self.new_user_id.append(user_id)
         
         
-    def del_user(self, user_id):
+    def del_user(self, user_id=1000000):
         self.df_r = self.df_r.drop(self.df_r[self.df_r["user_id"] == user_id].index)
         self.df_r.reset_index(drop=True)
 
 
     def show_books(self, start=0, end=10):
         print("\n", str(" "+str(start)+" ").center(50, "-"))
-        self.show_books(start, end)
+        self._show_books(start, end)
         print(str(" "+str(end)+" ").center(50, "-"), "\n")
         
         
@@ -328,15 +364,6 @@ class BookRecommendation(object):
             self.show_book_title_from_id(i)
         print("\n", " end ".center(50, "-"))
 
-        
-    def add_ratings(self, user_id=1000000, book_id=[1], rating=[5]):
-        self.add_ratings(user_id, book_id, rating)
-        # test
-        
-        
-    def del_user(self, user_id=1000000):
-        self.del_user(user_id)
-
 
 if __name__ == "__main__":
 
@@ -344,8 +371,11 @@ if __name__ == "__main__":
 
     #show_books(0, 10)
     #show_related_books(1, n_books=10)
-    book_recommendation.add_ratings(user_id=1000000, book_id=[1, 2, 3, 4, 5], rating=[3, 5, 5, 4, 5])
-    book_recommendation.show_user(user_id=1000000)
-    book_recommendation.recommend_user(1000000, n_books=10, new_horizon=False)
-    book_recommendation.recommend_user(1000000, n_books=10, new_horizon=True)
-    book_recommendation.del_user(user_id=1000000)
+    #book_recommendation.add_ratings(user_id=1000000, book_id=[1, 2, 3, 4, 5], rating=[3, 5, 5, 4, 5])
+    # book_recommendation.show_user(user_id=1000000)
+    # book_recommendation.recommend_user(1000000, n_books=10, new_horizon=False)
+    # book_recommendation.recommend_user(1000000, n_books=10, new_horizon=True)
+    # book_recommendation.del_user(user_id=1000000)
+    # book_recommendation.show_user(user_id=1000000)
+    book_recommendation.show_user(user_id=1)
+    book_recommendation.recommend_user(1, n_books=10, new_horizon=False)

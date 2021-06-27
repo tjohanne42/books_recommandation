@@ -116,6 +116,10 @@ if __name__ == "__main__":
     if not os.path.isfile("svd.pkl"):
         print("Downloading svd pickle file")
         download_file_from_google_drive("10j-l6WcTjdnzHkpZtwlJOiVoYk7oi-kZ", "svd.pkl")
+
+    if not os.path.isfile("corr.pkl"):
+        print("Downloading corr pickle file")
+        download_file_from_google_drive("1FCMALbYNZDF_Szo6fmruE8A4Do610fOw", "corr.pkl")
         
     df_r = pd.read_csv("databases/ratings.csv")
     df_b = pd.read_csv("databases/books.csv")
