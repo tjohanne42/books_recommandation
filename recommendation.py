@@ -310,32 +310,32 @@ class BookRecommendation(object):
         self.df_r.reset_index(drop=True)
 
 
-def show_books(start=0, end=10):
-    print("\n", str(" "+str(start)+" ").center(50, "-"))
-    book_recommendation.show_books(start, end)
-    print(str(" "+str(end)+" ").center(50, "-"), "\n")
-    
-    
-def show_user(user_id):
-    book_recommendation.show_books_from_user_id(user_id)
+    def show_books(self, start=0, end=10):
+        print("\n", str(" "+str(start)+" ").center(50, "-"))
+        self.show_books(start, end)
+        print(str(" "+str(end)+" ").center(50, "-"), "\n")
+        
+        
+    def show_user(self, user_id):
+        self.show_books_from_user_id(user_id)
 
-    
-def recommend_user(user_id, n_books=10, new_horizon=True):
-    print("\n", " recommendations ".center(50, "-"))
-    book_list = book_recommendation.generate_recommendation(user_id, n_books=n_books, new_horizon=new_horizon)
-    print("nb_books", len(book_list))
-    for i in book_list:
-        book_recommendation.show_book_title_from_id(i)
-    print("\n", " end ".center(50, "-"))
+        
+    def recommend_user(self, user_id, n_books=10, new_horizon=True):
+        print("\n", " recommendations ".center(50, "-"))
+        book_list = self.generate_recommendation(user_id, n_books=n_books, new_horizon=new_horizon)
+        print("nb_books", len(book_list))
+        for i in book_list:
+            self.show_book_title_from_id(i)
+        print("\n", " end ".center(50, "-"))
 
-    
-def add_ratings(user_id=1000000, book_id=[1], rating=[5]):
-    book_recommendation.add_ratings(user_id, book_id, rating)
-    # test
-    
-    
-def del_user(user_id=1000000):
-    book_recommendation.del_user(user_id)
+        
+    def add_ratings(self, user_id=1000000, book_id=[1], rating=[5]):
+        self.add_ratings(user_id, book_id, rating)
+        # test
+        
+        
+    def del_user(self, user_id=1000000):
+        self.del_user(user_id)
 
 
 if __name__ == "__main__":
@@ -344,10 +344,8 @@ if __name__ == "__main__":
 
     #show_books(0, 10)
     #show_related_books(1, n_books=10)
-    add_ratings(user_id=1000000, book_id=[1, 2, 3, 4, 5], rating=[3, 5, 5, 4, 5])
-    show_user(user_id=1000000)
-    recommend_user(1000000, n_books=10, new_horizon=False)
-    recommend_user(1000000, n_books=10, new_horizon=True)
-    del_user(user_id=1000000)
-
-
+    book_recommendation.add_ratings(user_id=1000000, book_id=[1, 2, 3, 4, 5], rating=[3, 5, 5, 4, 5])
+    book_recommendation.show_user(user_id=1000000)
+    book_recommendation.recommend_user(1000000, n_books=10, new_horizon=False)
+    book_recommendation.recommend_user(1000000, n_books=10, new_horizon=True)
+    book_recommendation.del_user(user_id=1000000)
