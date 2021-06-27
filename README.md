@@ -9,7 +9,7 @@
 
 For the SQL database, we decided to use the free database system provided by MySQL.
 
-For the recommendation engine, we used a mix of popularity based recommendation engine, a system based on a correlation matrix, and a SVD model provided by [the Surprise library](http://surpriselib.com/).
+For the recommendation engine, we used a mix of popularity based recommendation engine and a SVD model provided by [the Surprise library](http://surpriselib.com/).
 
 ## Setup
 
