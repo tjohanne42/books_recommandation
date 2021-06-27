@@ -2,6 +2,7 @@ import os
 import requests
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 
@@ -37,6 +38,14 @@ def download_file_from_google_drive(id, destination):
                                                                       
     save_response_content(response, destination)
 
+def download_raw_file_from_github(name, destination):
+    
+    URL = "https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/" + name
+    
+    session = requests.Session()
+    response = session.get(URL, stream=True)
+    
+    save_response_content(response, Path(destination))
 
 def create_mysql_info_file():
     f = open("mysql_info.txt", "w")
@@ -80,25 +89,29 @@ def read_mysql_info_file():
 
 if __name__ == "__main__":
 
-    if not os.path.isdir("databases"):
+    if not os.path.isdir(Path("databases")):
         print("Creating databases directory")
         os.system("mkdir databases")
     
-    if not os.path.isfile("databases/books.csv"):
+    if not os.path.isfile(Path("databases/books.csv")):
         print("Downloading books.csv")
-        download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "databases/books.csv")
+        # download_file_from_google_drive("1YnXO0GeZ_AwZ8XIY8tsQ-oyXH7RWhrjn", "databases/books.csv")
+        download_raw_file_from_github("books.csv", "./databases/books.csv")
 
-    if not os.path.isfile("databases/ratings.csv"):
+    if not os.path.isfile(Path("databases/ratings.csv")):
         print("Downloading ratings.csv")
-        download_file_from_google_drive("1p8sB9hW5fDn6JUjKTYTGgrHwy2gWNu5s", "databases/ratings.csv")
+        # download_file_from_google_drive("1p8sB9hW5fDn6JUjKTYTGgrHwy2gWNu5s", "databases/ratings.csv")
+        download_raw_file_from_github("ratings.csv", "./databases/ratings.csv")
         
-    if not os.path.isfile("databases/book_tags.csv"):
+    if not os.path.isfile(Path("databases/book_tags.csv")):
         print("Downloading book_tags.csv")
-        download_file_from_google_drive("1jUX5wnikcgp55vpvBqcadUcJYrEghJyt", "databases/book_tags.csv")
+        # download_file_from_google_drive("1jUX5wnikcgp55vpvBqcadUcJYrEghJyt", "databases/book_tags.csv")
+        download_raw_file_from_github("book_tags.csv", "./databases/book_tags.csv")
         
-    if not os.path.isfile("databases/tags.csv"):
+    if not os.path.isfile(Path("databases/tags.csv")):
         print("Downloading tags.csv")
-        download_file_from_google_drive("1lyZ_hOt4S2cMJ0tdo5Khc6rT_U4c60M0", "databases/tags.csv")
+        # download_file_from_google_drive("1lyZ_hOt4S2cMJ0tdo5Khc6rT_U4c60M0", "databases/tags.csv")
+        download_raw_file_from_github("tags.csv", "./databases/tags.csv")
         
     if not os.path.isfile("svd.pkl"):
         print("Downloading svd pickle file")
