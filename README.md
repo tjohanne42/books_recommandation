@@ -16,7 +16,7 @@ For the recommendation engine, we used a mix of popularity based recommendation 
 - create a new virtual environment *(recommended)* with python 3.9.
 - clone the github repository.
 - install all requirements: `pip install -r requirements.txt`
-- install MySQL (we recommend [LAMP](https://bitnami.com/stack/lamp) on linux)
-- setup the database: `python setup_database.py` (you will need to provide the MySQL host name, the user name, their password, and the name of the new SQL database)
+- install MySQL (we recommend [LAMP](https://bitnami.com/stack/lamp) on linux), and start the server.
+- setup the database: `python setup_database.py` (you will need to provide the MySQL host name, the user name, their password, and the name of the new SQL database).
 
 ## How to use
