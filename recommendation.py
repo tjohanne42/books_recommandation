@@ -29,7 +29,7 @@ class BookRecommendation(object):
         self.engine = read_mysql_info_file()
 
         init_timer = time.time()
-        self.svd_file = "svd_pickle_file"
+        self.svd_file = "svd.pkl"
         
         self.new_user_id = []
         
@@ -81,7 +81,7 @@ class BookRecommendation(object):
         if verbose:
             print("Done")
             print("Saving svd ...")
-        with open('svd_pickle_file', 'wb') as f1:
+        with open('svd.pkl', 'wb') as f1:
             pickle.dump(svd, f1)
         if verbose:
             print("Done")

@@ -100,9 +100,9 @@ if __name__ == "__main__":
         print("Downloading tags.csv")
         download_file_from_google_drive("1lyZ_hOt4S2cMJ0tdo5Khc6rT_U4c60M0", "databases/tags.csv")
         
-    if not os.path.isfile("svd_pickle_file"):
-        print("Downloading svd_pickle_file")
-        download_file_from_google_drive("10j-l6WcTjdnzHkpZtwlJOiVoYk7oi-kZ", "svd_pickle_file")
+    if not os.path.isfile("svd.pkl"):
+        print("Downloading svd pickle file")
+        download_file_from_google_drive("10j-l6WcTjdnzHkpZtwlJOiVoYk7oi-kZ", "svd.pkl")
         
     df_r = pd.read_csv("databases/ratings.csv")
     df_b = pd.read_csv("databases/books.csv")
