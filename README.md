@@ -9,7 +9,7 @@
 
 For the SQL database, we decided to use the free database system provided by MySQL.
 
-For the recommendation engine, we used a mix of popularity based recommendation engine, a system based on a correlation matrix, and a SVD model provided by [the Surprise library](http://surpriselib.com/).
+For the recommendation engine, we used a mix of popularity based recommendation engine and a SVD model provided by [the Surprise library](http://surpriselib.com/).
 
 ## Setup
 
@@ -20,3 +20,5 @@ For the recommendation engine, we used a mix of popularity based recommendation 
 - setup the database: `python setup_database.py` (you will need to provide the MySQL host name, the user name, their password, and the name of the new SQL database).
 
 ## How to use
+
+cf. [demo.ipynb]()
