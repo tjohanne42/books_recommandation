@@ -1,6 +1,6 @@
 # books_recommandation
 
-## Project goals:
+## Project goals
 
 - from a relational database of books from the website [goodreads.com](https://www.goodreads.com/), their ratings by users and their user-assigned tags, create a recommendation engine that can recommend books for any user, whether they already rated books on the website, or are new readers.
 - create a SQL database that would allow a backend team to access the informations they want.
@@ -9,7 +9,10 @@
 
 For the SQL database, we decided to use the free database system provided by MySQL.
 
-For the recommendation engine, we used a mix of popularity based recommendation engine and a SVD model provided by [the Surprise library](http://surpriselib.com/).
+For the recommendation engine, we used a mix of:
+- a popularity based recommendation engine,
+- a system based on a correlation matrix,
+- and a SVD model provided by [the Surprise library](http://surpriselib.com/).
 
 ## Setup
 
@@ -21,4 +24,4 @@ For the recommendation engine, we used a mix of popularity based recommendation 
 
 ## How to use
 
-cf. [demo.ipynb]()
+cf. [demo.ipynb](https://github.com/tjohanne42/books_recommandation/blob/main/demo.ipynb).
